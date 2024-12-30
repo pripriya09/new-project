@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #messages {
+      width: 400px;
+      height: 300px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      overflow-y: scroll;
+      margin-bottom: 10px;
+    }
+    #input {
+      width: 400px;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Chat Application</h2>
+  <div id="messages"></div>
+  <textarea id="input" placeholder="Type your message"></textarea><br>
+  <button id="sendBtn">Send</button>
+
+  <script>
+    const socket = new WebSocket('ws://localhost:8080');
+    
+    // Listen for incoming messages
+    socket.onmessage = (event) => {
+      const messagesDiv = document.getElementById('messages');
+      const message = document.createElement('div');
+      message.textContent = event.data;
+      messagesDiv.appendChild(message);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to bottom
+    };
+
+    // Send a message when the button is clicked
+    document.getElementById('sendBtn').onclick = () => {
+      const inputField = document.getElementById('input');
+      const message = inputField.value;
+      if (message) {
+        socket.send(message);
+        inputField.value = ''; // Clear input
+      }
+    };
+  </script>
+</body>
+</html>
